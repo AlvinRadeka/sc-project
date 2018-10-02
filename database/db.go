@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	// connection to postgres
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -14,6 +17,16 @@ const (
 	password = "root"
 	dbname   = "postgres"
 )
+
+type Users struct {
+	id          int
+	name        string
+	msisdn      string
+	email       string
+	birthDate   time.Time
+	createdTime time.Time
+	updatedTime time.Time
+}
 
 var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
@@ -48,7 +61,7 @@ func HandlePost() {
 	fmt.Println("# Last inserted id =", lastInsertID)
 }
 
-func HandleGetAll() {
+func HandleGet() {
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
@@ -59,6 +72,7 @@ func HandleGetAll() {
 
 	queryString := `
 	SELECT * FROM sc_project.users
+	LIMIT 20
 	`
 
 	rows, err := db.Query(queryString)
@@ -68,18 +82,12 @@ func HandleGetAll() {
 	}
 
 	for rows.Next() {
-		var id int
-		var name string
-		var msisdn string
-		var email string
-		var birthDate time.Time
-		var createdTime time.Time
-		var updatedTime time.Time
-		err = rows.Scan(&id, &name, &msisdn, &email, &birthDate, &createdTime, &updatedTime)
+		users := Users{}
+		err = rows.Scan(&users.id, &users.name, &users.msisdn, &users.email, &users.birthDate, &users.createdTime, &users.updatedTime)
 		if err != nil {
 			log.Println(err)
 			panic(err)
 		}
-		fmt.Printf("%v", id)
+		fmt.Printf("%v \n", users)
 	}
 }
