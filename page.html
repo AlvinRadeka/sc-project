@@ -5,25 +5,27 @@
     </style>
     <table class="tg">
       <tr>
-        <th>id</th>
-        <th>name</th>
-        <th>msisdn</th>
-        <th>email</th>
-        <th>birth_date</th>
-        <th>created_time</th>
-        <th>updated_time</th>
-        <th>age</th>
-        <th>calculation</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>MSISDN</th>
+        <th>Email</th>
+        <th>Birth Date</th>
+        <th>Created Time</th>
+        <th>Updated Time</th>
+        <th>Age</th>
+        <th>Calculation</th>
       </tr>
+      {{range .}}
       <tr>
-        <td>{{.user.id}}</td>
-        <td>{{.name}}</td>
-        <td>{{.user.msisdn}}</td>
-        <td>{{.email}}</td>
-        <td>{{.user.birth_date}}</td>
-        <td>{{.user.created_time}}</td>
-        <td>{{.user.updated_time}}</td>
+        <td>{{.ID}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.Msisdn}}</td>
+        <td>{{.Email}}</td>
+        <td>{{.BirthDate}}</td>
+        <td>{{.CreatedTime}}</td>
+        <td>{{.UpdatedTime}}</td>
         <td></td>
         <td></td>
       </tr>
+      {{end}}
     </table>

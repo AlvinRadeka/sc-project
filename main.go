@@ -13,17 +13,19 @@ type Page struct {
 	Body  []byte
 }
 
+// Users is
+type Users struct {
+	ID          int
+	Name        string
+	Msisdn      string
+	Email       string
+	BirthDate   time.Time
+	CreatedTime time.Time
+	UpdatedTime time.Time
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	t := time.Now()
-	user := Users{
-		id:          1,
-		name:        "aku",
-		msisdn:      "123",
-		email:       "aku@aku.aku",
-		birthDate:   t,
-		createdTime: t,
-		updatedTime: t,
-	}
+	user := HandleGet()
 	template, err := template.ParseFiles("page.html")
 	if err != nil {
 		log.Fatal(err)
