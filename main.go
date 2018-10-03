@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -25,12 +26,13 @@ type Users struct {
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	user := HandleGet()
+	users := HandleGet()
 	template, err := template.ParseFiles("page.html")
 	if err != nil {
 		log.Fatal(err)
 	}
-	template.Execute(w, user)
+	fmt.Println(user)
+	template.Execute(w, users)
 }
 
 func main() {

@@ -20,9 +20,10 @@ const (
 var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 // HandleGet is
-func HandleGet() *Users {
+func HandleGet() []Users {
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
+		log.Fatal(err)
 		panic(err)
 	}
 	defer db.Close()
@@ -36,50 +37,23 @@ func HandleGet() *Users {
 
 	rows, err := db.Query(queryString)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 		panic(err)
 	}
+	defer rows.Close()
 
-	users := Users{}
+	users := []Users{}
 	for rows.Next() {
-		err = rows.Scan(&users.ID, &users.Name, &users.Msisdn, &users.Email, &users.BirthDate, &users.CreatedTime, &users.UpdatedTime)
+		user := Users{}
+		err = rows.Scan(&user.ID, &user.Name, &user.Msisdn, &user.Email, &user.BirthDate, &user.CreatedTime, &user.UpdatedTime)
 		if err != nil {
 			log.Println(err)
 			panic(err)
 		}
+		users = append(users, user)
 	}
 
-	return &users
-}
+	fmt.Println("# Finished Reading")
 
-// HandlePost is
-func HandlePost() {
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	fmt.Println("# Inserting values")
-
-	var lastInsertID int
-	queryString := `
-	INSERT INTO sc_project.users(
-		id,
-		name,
-		msisdn,
-		email,
-		birth_date,
-		created_time,
-		updated_time
-		) VALUES(
-			$1,$2,$3,$4,$5,NOW(),NOW()) 
-		returning id;
-	`
-	err = db.QueryRow(queryString, "1", "alvin", "54321", "alvin@gmail.com", "1993-05-19").Scan(&lastInsertID)
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-	fmt.Println("# Last inserted id =", lastInsertID)
+	return users
 }
