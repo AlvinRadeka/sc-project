@@ -1,59 +1,70 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	// postgres import
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "root"
-	dbname   = "postgres"
-)
+// host     = "localhost"
+// port     = 5432
+// user     = "postgres"
+// password = "root"
+// dbname   = "postgres"
 
-var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+// Users is
+type Users struct {
+	ID          int       `db:"id"`
+	Name        string    `db:"name"`
+	Msisdn      string    `db:"msisdn"`
+	Email       string    `db:"email"`
+	BirthDate   time.Time `db:"birth_date"`
+	CreatedTime time.Time `db:"created_time"`
+	UpdatedTime time.Time `db:"updated_time"`
+}
+
+// ParsedUsers is
+type ParsedUsers struct {
+	ID          int
+	Name        string
+	Msisdn      string
+	Email       string
+	BirthDate   string
+	CreatedTime string
+	UpdatedTime string
+}
 
 // HandleGet is
-func HandleGet() []Users {
-	db, err := sql.Open("postgres", psqlInfo)
+func HandleGet() []ParsedUsers {
+	users := []ParsedUsers{}
+
+	return users
+}
+
+// GetUsers is func for get all users
+func GetUsers() []Users {
+	fmt.Println("# Started Reading Users")
+
+	db, err := sqlx.Connect("postgres", "user=postgres password=root dbname=postgres sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
-		panic(err)
+		log.Fatalln(err)
 	}
-	defer db.Close()
-
-	fmt.Println("# Reading values")
-
+	users := []Users{}
 	queryString := `
 	SELECT * FROM sc_project.users
 	LIMIT 20
 	`
 
-	rows, err := db.Query(queryString)
+	err = db.Select(&users, queryString)
 	if err != nil {
-		log.Fatal(err)
-		panic(err)
-	}
-	defer rows.Close()
-
-	users := []Users{}
-	for rows.Next() {
-		user := Users{}
-		err = rows.Scan(&user.ID, &user.Name, &user.Msisdn, &user.Email, &user.BirthDate, &user.CreatedTime, &user.UpdatedTime)
-		if err != nil {
-			log.Println(err)
-			panic(err)
-		}
-		users = append(users, user)
+		fmt.Println(err)
 	}
 
-	fmt.Println("# Finished Reading")
+	fmt.Println("# Finished Reading Users")
 
 	return users
 }
