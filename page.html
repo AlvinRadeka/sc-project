@@ -1,31 +1,40 @@
 <style type="text/css">
-    .tg  {border-collapse:collapse;border-spacing:0;}
-    .tg td{padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-    .tg th{padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-    </style>
-    <table class="tg">
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>MSISDN</th>
-        <th>Email</th>
-        <th>Birth Date</th>
-        <th>Created Time</th>
-        <th>Updated Time</th>
-        <th>Age</th>
-        <th>Calculation</th>
-      </tr>
-      {{range .}}
-      <tr>
-        <td>{{.ID}}</td>
-        <td>{{.Name}}</td>
-        <td>{{.Msisdn}}</td>
-        <td>{{.Email}}</td>
-        <td>{{.BirthDate}}</td>
-        <td>{{.CreatedTime}}</td>
-        <td>{{.UpdatedTime}}</td>
-        <td></td>
-        <td></td>
-      </tr>
-      {{end}}
-    </table>
+  .tg  {border-collapse:collapse;border-spacing:0;}
+  .tg td{padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+  .tg th{padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+</style>
+<br>
+<table class="tg" style="text-align: center">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>MSISDN</th>
+    <th>Email</th>
+    <th>Birth Date</th>
+    <th>Created Time</th>
+    <th>Updated Time</th>
+    <th>Age</th>
+    <th>Calculation</th>
+  </tr>
+  {{range .Users}}
+  <tr>
+    <td>{{.ID}}</td>
+    <td>{{.Name}}</td>
+    <td>{{.Msisdn}}</td>
+    <td>{{.Email}}</td>
+    <td>{{.BirthDate}}</td>
+    <td>{{.CreatedTime}}</td>
+    <td>{{.UpdatedTime}}</td>
+    <td>{{.Age}}</td>
+    <td></td>
+  </tr>
+  {{end}}
+</table>
+<br>
+<p>Visitor Count: {{.VisitorCount}}</p>
+<form action="/filter">
+  <b>Filter by Name:</b><br>
+  <input type="text" name="name" value="alvin">
+  <br>
+  <input type="submit" value="Submit">
+</form>
