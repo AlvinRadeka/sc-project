@@ -16,8 +16,7 @@ import (
 // password = "root"
 // dbname   = "postgres"
 
-// Users is
-type Users struct {
+type users struct {
 	ID          int       `db:"id"`
 	Name        string    `db:"name"`
 	Msisdn      string    `db:"msisdn"`
@@ -27,8 +26,7 @@ type Users struct {
 	UpdatedTime time.Time `db:"updated_time"`
 }
 
-// ParsedUsers is
-type ParsedUsers struct {
+type parsedUsers struct {
 	ID          int
 	Name        string
 	Msisdn      string
@@ -40,19 +38,18 @@ type ParsedUsers struct {
 	Calculation int
 }
 
-// HandleGet is for getting value from DB and increase visitor count
-func HandleGet() ([]ParsedUsers, int) {
+func handleGet() ([]parsedUsers, int) {
 	// init get redis
 	visitorCount := 20
 	// up by 1, send to NSQ, and send to PageInfo
 	// ...
 
-	rawUsers := GetUsers()
-	users := []ParsedUsers{}
+	rawUsers := getUsers()
+	users := []parsedUsers{}
 	t := time.Now().Year()
 
 	for _, v := range rawUsers {
-		user := ParsedUsers{}
+		user := parsedUsers{}
 		user.ID = v.ID
 		user.Name = v.Name
 		user.Msisdn = v.Msisdn
@@ -74,8 +71,7 @@ func HandleGet() ([]ParsedUsers, int) {
 	return users, visitorCount
 }
 
-// GetUsers is func for get all users
-func GetUsers() []*Users {
+func getUsers() []*users {
 	fmt.Println("# Started Reading Users")
 
 	db, err := sqlx.Connect("postgres", "user=postgres password=root dbname=postgres sslmode=disable")
@@ -83,7 +79,7 @@ func GetUsers() []*Users {
 		log.Fatalln(err)
 	}
 
-	users := []*Users{}
+	users := []*users{}
 	queryString := `
 	SELECT 
 		coalesce(id, '') as id,
@@ -108,8 +104,7 @@ func GetUsers() []*Users {
 	return users
 }
 
-// GetFilteredUsers is
-func GetFilteredUsers(filter string) []*Users {
+func getFilteredUsers(filter string) []*users {
 	fmt.Println("# Started Reading Filtered Users")
 
 	db, err := sqlx.Connect("postgres", "user=postgres password=root dbname=postgres sslmode=disable")
@@ -117,7 +112,8 @@ func GetFilteredUsers(filter string) []*Users {
 		log.Fatalln(err)
 	}
 
-	users := []*Users{}
+	users := []*users{}
+	filter = "%" + filter + "%"
 	queryString := `
 	SELECT 
 		coalesce(id, '') as id,
@@ -128,7 +124,7 @@ func GetFilteredUsers(filter string) []*Users {
 		coalesce(created_time, '0001-01-01 00:00:00') as created_time,
 		coalesce(updated_time, '0001-01-01 00:00:00') as updated_time
 	FROM sc_project.users
-	WHERE name like '%$1%'
+	WHERE name like $1
 	ORDER BY id
 	LIMIT 20
 	`

@@ -7,16 +7,16 @@ import (
 	"net/http"
 )
 
-// PageInfo is
-type PageInfo struct {
-	Users        []ParsedUsers
+type pageInfo struct {
+	Users        []parsedUsers
 	VisitorCount int
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	users, visitorCount := HandleGet()
+	users, visitorCount := handleGet()
+	fmt.Printf("%+v \n", users)
 
-	PageInfo := PageInfo{
+	pageInfo := pageInfo{
 		users,
 		visitorCount,
 	}
@@ -25,18 +25,16 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	template.Execute(w, PageInfo)
+	template.Execute(w, pageInfo)
 }
 
-//
 func filterHandler(w http.ResponseWriter, r *http.Request) {
-	filteredUsers := GetFilteredUsers("alvin")
-	fmt.Println(filteredUsers)
+	filteredUsers := getFilteredUsers("a")
+	fmt.Printf("%+v \n", filteredUsers)
 }
 
 func main() {
 	http.HandleFunc("/view/", viewHandler)
+	http.HandleFunc("/filter/", filterHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
-	//database.HandlePost()
-	//database.HandleGet()
 }

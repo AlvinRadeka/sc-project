@@ -11,7 +11,7 @@ func producer() {
 	config := nsq.NewConfig()
 	w, _ := nsq.NewProducer("127.0.0.1:32787", config)
 
-	err := w.Publish("write_test", []byte("test"))
+	err := w.Publish("visitor_count", []byte("1"))
 	if err != nil {
 		log.Panic("Could not connect")
 	}
@@ -25,7 +25,7 @@ func consumer() {
 	wg.Add(1)
 
 	config := nsq.NewConfig()
-	q, _ := nsq.NewConsumer("write_test", "ch", config)
+	q, _ := nsq.NewConsumer("visitor_count", "ch", config)
 	q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
 		log.Printf("Got a message: %v", *message)
 		wg.Done()
