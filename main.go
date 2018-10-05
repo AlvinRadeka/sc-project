@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -14,7 +13,6 @@ type pageInfo struct {
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	users, visitorCount := handleGet()
-	fmt.Printf("%+v \n", users)
 
 	pageInfo := pageInfo{
 		users,
@@ -29,8 +27,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func filterHandler(w http.ResponseWriter, r *http.Request) {
-	filteredUsers := getFilteredUsers("a")
-	fmt.Printf("%+v \n", filteredUsers)
+	// filteredUsers := getFilteredUsers("a")
 }
 
 func main() {

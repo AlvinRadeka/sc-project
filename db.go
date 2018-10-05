@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	// postgres import
+	"github.com/garyburd/redigo/redis"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -38,11 +38,49 @@ type parsedUsers struct {
 	Calculation int
 }
 
+func setVisitorCount(v int) error {
+	conn, err := redis.Dial("tcp", "localhost:6379")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// call producer here
+	// move redis SET from here to nsq consumer
+	_, err = conn.Do("SET", "visitor_count", v)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getVisitorCount() (int, error) {
+	conn, err := redis.Dial("tcp", "localhost:6379")
+	if err != nil {
+		return 0, err
+	}
+	defer conn.Close()
+
+	value, err := redis.Int(conn.Do("GET", "visitor_count"))
+	if err != nil {
+		return 0, err
+	}
+
+	return value, nil
+}
+
 func handleGet() ([]parsedUsers, int) {
-	// init get redis
-	visitorCount := 20
-	// up by 1, send to NSQ, and send to PageInfo
-	// ...
+	visitorCount, err := getVisitorCount()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	visitorCount = visitorCount + 1
+	err = setVisitorCount(visitorCount)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	rawUsers := getUsers()
 	users := []parsedUsers{}
@@ -96,7 +134,7 @@ func getUsers() []*users {
 
 	err = db.Select(&users, queryString)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 
 	fmt.Println("# Finished Reading Users")
@@ -131,7 +169,7 @@ func getFilteredUsers(filter string) []*users {
 
 	err = db.Select(&users, queryString, filter)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 
 	fmt.Println("# Finished Reading Filtered Users")

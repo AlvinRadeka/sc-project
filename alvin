@@ -1,0 +1,71 @@
+[33mcommit c6bf406b90d65bb8708ae024fca292db65d96532[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Fri Oct 5 11:53:53 2018 +0700
+
+    fixing filter before beginning nsq and reids
+
+[33mcommit 6a0da41a132a24449cf53d3358758d4568ad334e[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Fri Oct 5 10:37:45 2018 +0700
+
+    beginning redis+nsq implementation
+
+[33mcommit 6386c4403802f6218be2ef903581e4ec756fe569[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Thu Oct 4 13:06:26 2018 +0700
+
+    html done. next: implement filter
+
+[33mcommit c81004106da779b91ded158453df8168f39a8abe[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Thu Oct 4 08:42:52 2018 +0700
+
+    stable version
+
+[33mcommit c5b266f5b80616b4558bbdff67daad1c5f474024[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Wed Oct 3 17:16:35 2018 +0700
+
+    progress
+
+[33mcommit 3a4d261bef0955ebac7f68500f6acb9227b5ecb4[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Wed Oct 3 11:17:45 2018 +0700
+
+    connect db to html
+
+[33mcommit d3d0a1db24c1617faa5d4ec67ddb0452813acdd0[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Tue Oct 2 20:50:00 2018 +0700
+
+    start passing value to html
+
+[33mcommit dc09cdf43ff4d96da0284ac5a38607e420283b8d[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Tue Oct 2 17:34:45 2018 +0700
+
+    basic webpage
+
+[33mcommit b3ee38fc7ae0ab38c196c7481ec6acda25db1330[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Tue Oct 2 15:05:01 2018 +0700
+
+    change structure
+
+[33mcommit 375b0cf723db3b458cc1f979494ee06d955874a8[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Mon Oct 1 20:17:52 2018 +0700
+
+    add query insert
+
+[33mcommit 5deb7ad073acf56f8878d4f15dab0388154d8062[m
+Author: alvinradeka <alvin.radeka@tokopedia.com>
+Date:   Mon Oct 1 10:52:18 2018 +0700
+
+    hello world
+
+[33mcommit 3341c28529cd031d61b63d41cf974e3fb2ba23c8[m
+Author: Alvin Radeka Pratama <alvin.radeka@tokopedia.com>
+Date:   Mon Oct 1 10:47:55 2018 +0700
+
+    Initial commit
