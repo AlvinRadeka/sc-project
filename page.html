@@ -4,37 +4,41 @@
   .tg th{padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
 </style>
 <br>
-<table class="tg" style="text-align: center">
-  <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>MSISDN</th>
-    <th>Email</th>
-    <th>Birth Date</th>
-    <th>Created Time</th>
-    <th>Updated Time</th>
-    <th>Age</th>
-    <th>Calculation</th>
-  </tr>
-  {{range .Users}}
-  <tr>
-    <td>{{.ID}}</td>
-    <td>{{.Name}}</td>
-    <td>{{.Msisdn}}</td>
-    <td>{{.Email}}</td>
-    <td>{{.BirthDate}}</td>
-    <td>{{.CreatedTime}}</td>
-    <td>{{.UpdatedTime}}</td>
-    <td>{{.Age}}</td>
-    <td></td>
-  </tr>
-  {{end}}
+<table id="user_table"class="display tg" style="text-align: center">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>MSISDN</th>
+      <th>Email</th>
+      <th>Birth Date</th>
+      <th>Created Time</th>
+      <th>Updated Time</th>
+      <th>Age</th>
+      <th>Calculation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Users}}
+    <tr>
+      <td>{{.ID}}</td>
+      <td>{{.Name}}</td>
+      <td>{{.Msisdn}}</td>
+      <td>{{.Email}}</td>
+      <td>{{.BirthDate}}</td>
+      <td>{{.CreatedTime}}</td>
+      <td>{{.UpdatedTime}}</td>
+      <td>{{.Age}}</td>
+      <td></td>
+    </tr>
+    {{end}}
+  </tbody>
 </table>
 <br>
 <p>Visitor Count: {{.VisitorCount}}</p>
-<form action="/filter">
+<form>
   <b>Filter by Name:</b><br>
-  <input type="text" name="name" value="alvin">
+  <input type="text" name="name" value="">
   <br>
   <input type="submit" value="Submit">
 </form>

@@ -40,8 +40,13 @@ type ParsedUsers struct {
 	Calculation int
 }
 
-// HandleGet is
-func HandleGet() []ParsedUsers {
+// HandleGet is for getting value from DB and increase visitor count
+func HandleGet() ([]ParsedUsers, int) {
+	// init get redis
+	visitorCount := 20
+	// up by 1, send to NSQ, and send to PageInfo
+	// ...
+
 	rawUsers := GetUsers()
 	users := []ParsedUsers{}
 	t := time.Now().Year()
@@ -66,7 +71,7 @@ func HandleGet() []ParsedUsers {
 		users = append(users, user)
 	}
 
-	return users
+	return users, visitorCount
 }
 
 // GetUsers is func for get all users
@@ -105,7 +110,7 @@ func GetUsers() []*Users {
 
 // GetFilteredUsers is
 func GetFilteredUsers(filter string) []*Users {
-	fmt.Println("# Started Reading Users")
+	fmt.Println("# Started Reading Filtered Users")
 
 	db, err := sqlx.Connect("postgres", "user=postgres password=root dbname=postgres sslmode=disable")
 	if err != nil {
@@ -133,7 +138,7 @@ func GetFilteredUsers(filter string) []*Users {
 		fmt.Println(err)
 	}
 
-	fmt.Println("# Finished Reading Users")
+	fmt.Println("# Finished Reading Filtered Users")
 
 	return users
 }
