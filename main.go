@@ -31,7 +31,6 @@ func filterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	consumer()
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/filter/", filterHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
