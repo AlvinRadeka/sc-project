@@ -38,23 +38,6 @@ type parsedUsers struct {
 	Calculation int
 }
 
-func setVisitorCount(v int) error {
-	conn, err := redis.Dial("tcp", "localhost:6379")
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	// call producer here
-	// move redis SET from here to nsq consumer
-	_, err = conn.Do("SET", "visitor_count", v)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func getVisitorCount() (int, error) {
 	conn, err := redis.Dial("tcp", "localhost:6379")
 	if err != nil {
@@ -77,7 +60,7 @@ func handleGet() ([]parsedUsers, int) {
 	}
 
 	visitorCount = visitorCount + 1
-	err = setVisitorCount(visitorCount)
+	err = producer(visitorCount)
 	if err != nil {
 		log.Fatalln(err)
 	}
