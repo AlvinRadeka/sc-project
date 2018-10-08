@@ -7,7 +7,7 @@ import (
 )
 
 type pageInfo struct {
-	Users        []parsedUsers
+	Users        []ParsedUsers
 	VisitorCount int
 }
 
@@ -27,7 +27,8 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func filterHandler(w http.ResponseWriter, r *http.Request) {
-	// filteredUsers := getFilteredUsers("a")
+	filteredUsers := handleFilter("a")
+	log.Println(string(filteredUsers))
 }
 
 func main() {

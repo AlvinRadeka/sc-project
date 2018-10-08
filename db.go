@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -26,16 +27,17 @@ type users struct {
 	UpdatedTime time.Time `db:"updated_time"`
 }
 
-type parsedUsers struct {
-	ID          int
-	Name        string
-	Msisdn      string
-	Email       string
-	BirthDate   string
-	CreatedTime string
-	UpdatedTime string
-	Age         int
-	Calculation int
+// ParsedUsers is for converting nil or other value to recognizable form
+type ParsedUsers struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Msisdn      string `json:"msisdn"`
+	Email       string `json:"email"`
+	BirthDate   string `json:"birth_date"`
+	CreatedTime string `json:"created_time"`
+	UpdatedTime string `json:"updated_time"`
+	Age         int    `json:"age"`
+	Calculation int    `json:"calculation"`
 }
 
 func getVisitorCount() (int, error) {
@@ -53,7 +55,58 @@ func getVisitorCount() (int, error) {
 	return value, nil
 }
 
-func handleGet() ([]parsedUsers, int) {
+func convertUsers(rawUsers []*users) []ParsedUsers {
+	users := []ParsedUsers{}
+	t := time.Now().Year()
+
+	for _, v := range rawUsers {
+		user := ParsedUsers{}
+		user.ID = v.ID
+		if v.Name == "" {
+			user.Name = "-"
+		} else {
+			user.Name = v.Name
+		}
+
+		if v.Msisdn == "" {
+			user.Msisdn = "-"
+		} else {
+			user.Msisdn = v.Msisdn
+		}
+
+		if v.Email == "" {
+			user.Email = "-"
+		} else {
+			user.Email = v.Email
+		}
+
+		if v.BirthDate.Format("2006-01-02 15:04:05") != "0001-01-01 00:00:00" {
+			user.BirthDate = v.BirthDate.Format("2006-01-02")
+			user.Age = t - v.BirthDate.Year()
+		} else {
+			user.BirthDate = "-"
+			user.Age = 0
+		}
+
+		if v.CreatedTime.Format("2006-01-02 15:04:05") != "0001-01-01 00:00:00" {
+			user.CreatedTime = v.CreatedTime.Format("2006-01-02 15:04:05")
+		} else {
+			user.CreatedTime = "-"
+		}
+
+		if v.UpdatedTime.Format("2006-01-02 15:04:05") != "0001-01-01 00:00:00" {
+			user.UpdatedTime = v.UpdatedTime.Format("2006-01-02 15:04:05")
+		} else {
+			user.UpdatedTime = "-"
+		}
+
+		users = append(users, user)
+	}
+
+	return users
+}
+
+func handleGet() ([]ParsedUsers, int) {
 	visitorCount, err := getVisitorCount()
 	if err != nil {
 		log.Fatalln(err)
@@ -65,68 +118,26 @@ func handleGet() ([]parsedUsers, int) {
 		log.Fatalln(err)
 	}
 
-	rawUsers := getUsers()
-	users := []parsedUsers{}
-	t := time.Now().Year()
-
-	for _, v := range rawUsers {
-		user := parsedUsers{}
-		user.ID = v.ID
-		user.Name = v.Name
-		user.Msisdn = v.Msisdn
-		user.Email = v.Email
-		if v.BirthDate.Format("2006-01-02 15:04:05") != "0001-01-01 00:00:00" {
-			user.BirthDate = v.BirthDate.Format("2006-01-02")
-			user.Age = t - v.BirthDate.Year()
-		}
-		if v.CreatedTime.Format("2006-01-02 15:04:05") != "0001-01-01 00:00:00" {
-			user.CreatedTime = v.CreatedTime.Format("2006-01-02 15:04:05")
-		}
-		if v.UpdatedTime.Format("2006-01-02 15:04:05") != "0001-01-01 00:00:00" {
-			user.UpdatedTime = v.UpdatedTime.Format("2006-01-02 15:04:05")
-		}
-
-		users = append(users, user)
-	}
+	rawUsers := getUsers("")
+	users := convertUsers(rawUsers)
 
 	return users, visitorCount
 }
 
-func getUsers() []*users {
-	fmt.Println("# Started Reading Users")
+func handleFilter(filter string) []byte {
+	rawUsers := getUsers(filter)
+	users := convertUsers(rawUsers)
 
-	db, err := sqlx.Connect("postgres", "user=postgres password=root dbname=postgres sslmode=disable")
+	sentUsers, err := json.Marshal(users)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	users := []*users{}
-	queryString := `
-	SELECT 
-		coalesce(id, '') as id,
-		coalesce(name, '') as name,
-		coalesce(msisdn, '') as msisdn,
-		coalesce(email, '') as email,
-		coalesce(birth_date, '0001-01-01 00:00:00') as birth_date,
-		coalesce(created_time, '0001-01-01 00:00:00') as created_time,
-		coalesce(updated_time, '0001-01-01 00:00:00') as updated_time
-	FROM sc_project.users
-	ORDER BY id
-	LIMIT 20
-	`
-
-	err = db.Select(&users, queryString)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	fmt.Println("# Finished Reading Users")
-
-	return users
+	return sentUsers
 }
 
-func getFilteredUsers(filter string) []*users {
-	fmt.Println("# Started Reading Filtered Users")
+func getUsers(filter string) []*users {
+	fmt.Println("# Started Reading Users")
 
 	db, err := sqlx.Connect("postgres", "user=postgres password=root dbname=postgres sslmode=disable")
 	if err != nil {
@@ -155,7 +166,7 @@ func getFilteredUsers(filter string) []*users {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("# Finished Reading Filtered Users")
+	fmt.Println("# Finished Reading Users")
 
 	return users
 }
