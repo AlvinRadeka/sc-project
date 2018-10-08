@@ -27,12 +27,39 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func filterHandler(w http.ResponseWriter, r *http.Request) {
-	filteredUsers := handleFilter("a")
-	log.Println(string(filteredUsers))
+	if r.Method == "POST" {
+		err := r.ParseForm()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		values := []string{}
+		for _, v := range r.Form["name"] {
+			values = append(values, v)
+		}
+
+		users := handleFilter(values[0])
+		template, err := template.ParseFiles("page.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		visitorCount, err := getVisitorCount()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		pageInfo := pageInfo{
+			users,
+			visitorCount,
+		}
+
+		template.Execute(w, pageInfo)
+	}
 }
 
 func main() {
-	http.HandleFunc("/view/", viewHandler)
-	http.HandleFunc("/filter/", filterHandler)
+	http.HandleFunc("/", viewHandler)
+	http.HandleFunc("/filter", filterHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

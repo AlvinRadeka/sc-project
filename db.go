@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -37,7 +36,7 @@ type ParsedUsers struct {
 	CreatedTime string `json:"created_time"`
 	UpdatedTime string `json:"updated_time"`
 	Age         int    `json:"age"`
-	Calculation int    `json:"calculation"`
+	Calculation string `json:"calculation"`
 }
 
 func getVisitorCount() (int, error) {
@@ -100,6 +99,8 @@ func convertUsers(rawUsers []*users) []ParsedUsers {
 			user.UpdatedTime = "-"
 		}
 
+		user.Calculation = "-"
+
 		users = append(users, user)
 	}
 
@@ -124,16 +125,16 @@ func handleGet() ([]ParsedUsers, int) {
 	return users, visitorCount
 }
 
-func handleFilter(filter string) []byte {
+func handleFilter(filter string) []ParsedUsers {
 	rawUsers := getUsers(filter)
 	users := convertUsers(rawUsers)
 
-	sentUsers, err := json.Marshal(users)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	// sentUsers, err := json.Marshal(users)
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
 
-	return sentUsers
+	return users
 }
 
 func getUsers(filter string) []*users {
